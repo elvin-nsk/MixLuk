@@ -1,7 +1,7 @@
 Attribute VB_Name = "lib_elvin"
 '===============================================================================
 '   Модуль          : lib_elvin
-'   Версия          : 2022.10.16
+'   Версия          : 2022.10.29
 '   Автор           : elvin-nsk (me@elvin.nsk.ru)
 '   Использован код : dizzy (из макроса CtC), Alex Vakulenko
 '                     и др.
@@ -204,6 +204,14 @@ Private Sub AddFontToCollection( _
     Next Font
     If Not Found Then ioFonts.Add FontName
 End Sub
+
+Public Function DiffWithinTolerance( _
+                     ByVal Number1 As Variant, _
+                     ByVal Number2 As Variant, _
+                     ByVal Tolerance As Variant _
+                 ) As Boolean
+    DiffWithinTolerance = VBA.Abs(Number1 - Number2) < Tolerance
+End Function
 
 'возвращает все шейпы на всех слоях текущей страницы, по умолчанию - без мастер-слоёв и без гайдов
 Public Function FindShapesActivePageLayers( _

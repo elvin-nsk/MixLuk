@@ -33,12 +33,20 @@ Sub MakeDashes()
     lib_elvin.BoostStart "MakeDashes", RELEASE
     
     Dim Line As Shape
+    Dim InvalidCount As Long
     For Each Line In Lines
-        MakeDashesOnLine Line, a
-        ContinueLine Line, a
+        If IsPerpendicularLine(Line) Then
+            MakeDashesOnLine Line, a
+            ContinueLine Line, a
+        Else
+            InvalidCount = InvalidCount + 1
+        End If
     Next Line
     
     Source.CreateSelection
+    
+    If InvalidCount > 0 Then _
+        VBA.MsgBox "Пропущено " & InvalidCount & " линий наискосок"
     
 Finally:
     lib_elvin.BoostFinish
@@ -51,6 +59,13 @@ Catch:
 End Sub
 
 '===============================================================================
+
+Private Function IsPerpendicularLine(ByVal Line As Shape) As Boolean
+    Const Tolerance As Double = 0.001
+    IsPerpendicularLine = _
+        DiffWithinTolerance(Line.SizeWidth, 0, Tolerance) _
+     Or DiffWithinTolerance(Line.SizeHeight, 0, Tolerance)
+End Function
 
 Private Function MakeDashesOnLine( _
                      ByVal Line As Shape, _
@@ -69,6 +84,8 @@ Private Function MakeDashesOnLine( _
                 MakeDashAtNode(.Last, Offset), Line _
             )
     End With
+    Dashes.SetOutlineProperties Line.Outline.Width * 2
+    Set MakeDashesOnLine = Dashes
 End Function
 
 Private Function MakeDashAtNode( _
